@@ -1,6 +1,10 @@
 HALF_LINE = "="*10
 LINE = "=" *30
+import logging
 import sqlite3
+logging.basicConfig(filename="app.log",
+                    level=logging.INFO,
+                    format="%(asctime)s| %(levelname)s | %(message)s")
 
 class StudentManager:
 
@@ -53,11 +57,15 @@ class StudentManager:
                 break
             else:
                 print("Course can't be empty!")
-        self.cursor.execute("""INSERT INTO students(name, age, course)
-                            VALUES(?, ?, ?)""",(name, age, course))
-        self.connection.commit()
-        print("Student added successfully!")
-    
+        try:
+            self.cursor.execute("""INSERT INTO students(name, age, course)
+                                VALUES(?, ?, ?)""",(name, age, course))
+            self.connection.commit()
+            print("Student added successfully!")
+            logging.info(f"Student added successfully | Name:{name}, Age: {age},Course: {course} ")
+        except Exception:
+            logging.exception("Failed to add student")
+            print("Something went wrong when adding the student!")
 
     def view_students(self):
         self.cursor.execute("SELECT * FROM students ")
@@ -191,10 +199,16 @@ class StudentManager:
 
                     elif choice == 4:
                         break
-                    self.cursor.execute(query,(params,student_id))
-                    self.connection.commit()
-                    print(message)
+                    try:
+                        self.cursor.execute(query,(params,student_id))
+                        self.connection.commit()
+                        logging.info(f"{message} | Student ID: {student_id}")
+                        print(message)
+                    except Exception:
+                        logging.exception(f"Failed to update student | Student ID: {student_id}")
+                        print("Something went wrong while updating details of student")
         else:
+            logging.warning(f"Student not found | Student ID: {student_id} ")
             print("No matching student found!")
 
         
@@ -214,13 +228,21 @@ class StudentManager:
                 if y_n in ["y","n"]:
                     break
             if y_n == "y":
-                self.cursor.execute("DELETE FROM students WHERE id =?",(student_id,))
-                self.connection.commit()
-                print("Student deleted successfully!")
+                try:
+                    self.cursor.execute("DELETE FROM students WHERE id =?",(student_id,))
+                    self.connection.commit()
+                    print("Student deleted successfully!")
+                    logging.info(f"Student deleted successfully. | Student ID: {student_id}")
+                except Exception:
+                    logging.exception("Student not deleted")
+                    print("Something went wrong while deleting student!")
             else:
+                logging.info(f"Student deletation cancelled |{student_id}")
                 print("Deletion cancelled!")
         else:
+            logging.warning(f"Student not found| Student id: {student_id}")
             print("Matching student not found!")
+
 
         
     def count_students(self):
@@ -287,6 +309,7 @@ class StudentManager:
 
 def main():
     manager = StudentManager()
+    logging.info("Student management system started")
     while True:
         print(f"{HALF_LINE} Student Management System {HALF_LINE}")
         print("1. Add Student")

@@ -1,2 +1,12 @@
+# Virtual environment
+.venv/
+
+# Database files
+*.db
+
+# Log files
+*.log
+
+# Python cache
 __pycache__/
 *.pyc

@@ -41,9 +41,12 @@ A menu-driven Student Management System built with **Python**, **Object-Oriented
 ```
 Student-Management-System/
 │
-├── student_management_system.py
-├── data.db
-└── README.md
+├── student_management.py
+├── students.db
+├── app.log
+├── requirements.txt
+├── README.md
+└── .gitignore
 ```
 
 ---
@@ -98,6 +101,7 @@ python student_management_system.py
 - Input Validation
 - Menu-Driven Applications
 - Database Management
+- Logging System
 
 ---
 
